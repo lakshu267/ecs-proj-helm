@@ -4,7 +4,7 @@ pipeline {
         stage ('SCM checkout') {
             steps {
                 script{
-                     git credentialsId: 'git-cred', url: 'https://github.com/naresh26git/helm-node.git'
+                     git 'https://github.com/lakshu267/ecs-proj-helm.git'
                 }
             }
         }
@@ -28,8 +28,15 @@ pipeline {
         stage('Docker Build Images') {
             steps {
                 script {
-                    sh 'docker build -t naresh2603/helm-rockets:v1 .'
+                    sh 'docker build -t lakshu/helm-rockets:v1 .'
                     sh 'docker images'
+                }
+            }
+        }
+        stage('Trivy Docker-scan') {
+            steps {
+                script {
+                    sh 'trivy image lakshu/helm-rockets:v1 > scan.txt' 
                 }
             }
         }
@@ -37,8 +44,8 @@ pipeline {
             steps {
                 script {
                     withCredentials([string(credentialsId: 'dockerPass', variable: 'dockerPassword')]) {
-                        sh "docker login -u naresh2603 -p ${dockerPassword}"
-                        sh 'docker push naresh2603/helm-rockets:v1'
+                        sh "docker login -u lakshu -p ${dockerPassword}"
+                        sh 'docker push lakshu/helm-rockets:v1'
                     }
                 }
             }
@@ -46,7 +53,11 @@ pipeline {
         stage('Trivy Docker-scan') {
             steps {
                 script {
-                    sh 'trivy image naresh2603/helm-rockets:v1 > scan.txt' 
+                    sh '''
+                        wget https://github.com/aquasecurity/trivy/releases/download/v0.40.0/trivy_0.40.0_Linux-64bit.tar.gz
+                        tar zxvf trivy_0.40.0_Linux-64bit.tar.gz
+                        ./trivy image lakshu/helm-rockets:v1 > scan.txt
+                    ''' 
                 }
             }
         }
@@ -68,7 +79,7 @@ pipeline {
         stage('Dast Scanning OWASP') {
             steps {
                 script{
-                    sh "cd ZAP_2.14.0 && ./zap.sh -port 9090 -cmd -quickurl http://18.208.212.61:30008 -quickprogress -quickout ../zap_updated_report.html"
+                    sh "cd ZAP_2.14.0 && ./zap.sh -port 9090 -cmd -quickurl http://3.93.33.194:30008 -quickprogress -quickout ../zap_updated_report.html"
                 }
             }
         }
