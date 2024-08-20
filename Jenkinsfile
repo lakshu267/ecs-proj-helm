@@ -33,13 +33,6 @@ pipeline {
                 }
             }
         }
-        stage('Trivy Docker-scan') {
-            steps {
-                script {
-                    sh 'trivy image lakshu/helm-rockets:v1 > scan.txt' 
-                }
-            }
-        }
         stage('Docker Push') {
             steps {
                 script {
