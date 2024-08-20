@@ -72,8 +72,8 @@ pipeline {
         stage('Dast Scanning OWASP') {
             steps {
                 script{
-                    sh "wget https://github.com/zaproxy/zaproxy/releases/download/v2.14.0/ZAP_2.14.0_Linux.tar.gz"
-                    sh "tar -xvf ZAP_2.14.0_Linux.tar.gz"
+                    //sh "wget https://github.com/zaproxy/zaproxy/releases/download/v2.14.0/ZAP_2.14.0_Linux.tar.gz"
+                    //sh "tar -xvf ZAP_2.14.0_Linux.tar.gz"
                     sh "cd ZAP_2.14.0 && ./zap.sh -port 9090 -cmd -quickurl http://3.93.33.194:30008 -quickprogress -quickout ../zap_updated_report.html"
                 }
             }
